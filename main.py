@@ -1,4 +1,8 @@
+import asyncio
+import os
 import sys
+
+sys.path.append(os.getcwd())
 
 from langchain_core.messages import HumanMessage
 
@@ -6,13 +10,18 @@ from src.agents.supervisor import app
 from src.utils.logger import logger
 
 
-def main():
+async def main():
+    print("\n🤖 --- OMNI-RESEARCH CLI (STREAMING) --- 🤖")
     print("Gõ 'exit' hoặc 'quit' để thoát.\n")
 
     config = {"configurable": {"thread_id": "1"}}
 
     while True:
-        user_input = input("\nNhập chủ đề: ").strip()
+        try:
+            user_input = input("\n👤 Nhập chủ đề: ").strip()
+        except KeyboardInterrupt:
+            break
+
         if user_input.lower() in ["exit", "quit"]:
             print("\nTạm biệt.")
             break
@@ -27,20 +36,35 @@ def main():
             "feedback": "",
         }
 
-        app.update_state(config=config, values=initial_state)
+        await app.aupdate_state(config, initial_state)
 
         while True:
-            # Chạy graph cho đến khi dừng (interrupt hoặc kết thúc)
+            print("\nCyberspace activity: ", end="", flush=True)
+
             try:
-                for event in app.stream(None, config=config):
-                    for key, _ in event.items():
-                        print(f"   Using Node: {key}...")
+                async for event in app.astream_events(None, config, version="v2"):
+                    kind = event["event"]
+
+                    if kind == "on_tool_start":
+                        print(
+                            f"\n⚡ Đang dùng công cụ: {event['name']}...",
+                            end="\n",
+                            flush=True,
+                        )
+
+                    elif kind == "on_chat_model_stream":
+                        chunk = event["data"]["chunk"]
+                        if chunk.content:
+                            print(chunk.content, end="", flush=True)
+
             except Exception as e:
-                logger.error(f" Lỗi Graph: {e}")
+                logger.error(f"\n❌ Lỗi Graph: {e}")
                 break
 
-            # Kiểm tra state sau khi stream dừng
-            snapshot = app.get_state(config=config)
+            print("\n")
+
+            snapshot = await app.aget_state(config)
+
             if not snapshot.values:
                 break
 
@@ -48,50 +72,36 @@ def main():
             next_step = state_data.get("next_step")
             draft = state_data.get("current_draft")
 
-            # Nếu đã hoàn tất
             if next_step == "FINISH":
-                print("\nQuy trình hoàn tất! File đã được lưu.")
+                print(f"✅ Quy trình hoàn tất! (File đã lưu)")
                 print("-" * 50)
                 break
 
-            # Kiểm tra xem graph có đang dừng tại interrupt point (human_review) không
-            is_pending_review = snapshot.next and "human_review" in snapshot.next
-            if is_pending_review and draft:
+            if next_step == "REVIEW" and draft:
                 print("\n" + "=" * 50)
-                print("📄 BẢN NHÁP ĐỀ XUẤT TỪ WRITER:")
-                print("=" * 50)
-                preview = draft[:1000] + ("..." if len(draft) > 1000 else "")
-                print(preview)
+                print("👮‍♂️ CHỜ DUYỆT BÀI (Hệ thống đang tạm dừng)")
                 print("=" * 50)
 
                 choice = (
-                    input("\nREVIEW: Bạn có duyệt bài này không? (yes/no): ")
-                    .strip()
-                    .lower()
+                    input("\nBạn có duyệt bài trên không? (yes/no): ").strip().lower()
                 )
 
                 if choice in ["y", "yes", "ok", "duyet", "đồng ý"]:
-                    print(">> Đã duyệt! Đang tiến hành lưu file...")
-                    app.update_state(config=config, values={"next_step": "PUBLISH"})
-                    # Tiếp tục vòng lặp để chạy stream() tiếp
+                    print(">> ✅ Đã duyệt! Đang lưu file...")
+                    await app.aupdate_state(config, {"next_step": "PUBLISH"})
+
                 else:
-                    feedback = input(">> Hãy nhập yêu cầu sửa đổi (Feedback): ").strip()
-                    print(">> Đã gửi yêu cầu cho Writer viết lại.")
-                    app.update_state(
-                        config=config,
-                        values={"next_step": "WRITE", "feedback": feedback},
+                    feedback = input(">> ✍️ Feedback sửa đổi: ").strip()
+                    print(">> Đã gửi yêu cầu viết lại.")
+                    await app.aupdate_state(
+                        config,
+                        {"next_step": "WRITE", "feedback": feedback},
                     )
-                    # Tiếp tục vòng lặp để chạy stream() tiếp
-            else:
-                # Trạng thái không xác định hoặc graph đã kết thúc
-                if not snapshot.next:
-                    # Graph đã kết thúc nhưng không ở FINISH
-                    logger.warning(f"Graph kết thúc ở trạng thái: {next_step}")
-                    break
-                else:
-                    logger.warning(f"Trạng thái không xác định. next_step={next_step}, pending={snapshot.next}")
-                    break
+
+            elif next_step not in ["RESEARCH", "WRITE", "PUBLISH", "REVIEW", "FINISH"]:
+                logger.warning(f"Graph dừng ở trạng thái lạ: {next_step}")
+                break
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
