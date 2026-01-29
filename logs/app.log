@@ -69,3 +69,34 @@ During task with name 'tools' and id '45aad061-2d06-6689-6119-1ceec30fa347'
 11:08:49 | INFO     | researcher.py:44 | Researcher quyết định dùng Tool: [{'name': 'tavily_search', 'args': {'query': 'best open source LLM models 2025', 'search_depth': 'advanced'}, 'id': 'a5ce34e3-02fa-498a-aabd-b90a1858cfae', 'type': 'tool_call'}]
 11:09:01 | INFO     | researcher.py:46 | Researcher đã tìm xong thông tin.
 15:10:59 | INFO     | test_writer.py:29 | Input Materials: 4 đoạn thông tin.
+05:31:54 | INFO     | main.py:22 | Bắt đầu quy trình với chủ đề: Cách để có một cuộc sống năng suất
+05:39:33 | INFO     | researcher.py:42 | Researcher quyết định dùng Tool: [{'name': 'tavily_search', 'args': {'query': 'Test quy trình tự động Omni Research', 'search_depth': 'advanced'}, 'id': '7d7bc2da-fdf1-4627-a519-fa597113b1aa', 'type': 'tool_call'}]
+05:39:49 | INFO     | researcher.py:44 | Researcher đã tìm xong thông tin.
+05:46:08 | INFO     | researcher.py:42 | Researcher quyết định dùng Tool: [{'name': 'tavily_search', 'args': {'query': 'Test quy trình tự động Omni Research', 'search_depth': 'advanced'}, 'id': '42606c40-2f40-4400-98a8-f40c515d9dd3', 'type': 'tool_call'}]
+05:46:20 | INFO     | researcher.py:44 | Researcher đã tìm xong thông tin.
+05:50:06 | INFO     | researcher.py:42 | Researcher quyết định dùng Tool: [{'name': 'tavily_search', 'args': {'query': 'Test quy trình tự động Omni Research', 'search_depth': 'advanced'}, 'id': '54ebb14d-bc7e-4785-a8c7-6fc32c41d16d', 'type': 'tool_call'}]
+05:50:19 | INFO     | researcher.py:44 | Researcher đã tìm xong thông tin.
+05:57:28 | INFO     | researcher.py:42 | Researcher quyết định dùng Tool: [{'name': 'tavily_search', 'args': {'query': 'Test quy trình tự động Omni Research', 'search_depth': 'advanced'}, 'id': 'c9e9c31c-e980-4ad5-a5ad-27ee27a1a865', 'type': 'tool_call'}]
+05:57:41 | INFO     | researcher.py:44 | Researcher đã tìm xong thông tin.
+05:58:07 | INFO     | supervisor.py:50 | ⏸️  Đang chờ Human Review...
+05:58:07 | INFO     | file_tools.py:22 | Đang xử lý lưu file: report_Test quy trình tự độ.md...
+05:58:07 | INFO     | file_tools.py:42 | ✅ Đã lưu file chuẩn đẹp tại: /home/muggle/hlt/py/my-project/omni-research/reports/report_Test_quy_trình_tự_độ.md
+05:58:34 | INFO     | researcher.py:42 | Researcher quyết định dùng Tool: [{'name': 'tavily_search', 'args': {'query': 'Test quy trình tự động Omni Research', 'search_depth': 'advanced'}, 'id': 'f65ac8c2-93b8-48c7-a3b9-96e6ecc0d034', 'type': 'tool_call'}]
+05:58:48 | INFO     | researcher.py:44 | Researcher đã tìm xong thông tin.
+05:59:12 | INFO     | supervisor.py:50 | ⏸️  Đang chờ Human Review...
+05:59:12 | INFO     | file_tools.py:22 | Đang xử lý lưu file: report_Test quy trình tự độ.md...
+05:59:12 | INFO     | file_tools.py:42 | ✅ Đã lưu file chuẩn đẹp tại: /home/muggle/hlt/py/my-project/omni-research/reports/report_Test_quy_trình_tự_độ.md
+06:00:18 | INFO     | main.py:22 | Bắt đầu quy trình với chủ đề: Cuộc sống năng suất
+06:00:21 | INFO     | researcher.py:42 | Researcher quyết định dùng Tool: [{'name': 'tavily_search', 'args': {'query': 'cuộc sống năng suất', 'search_depth': 'advanced'}, 'id': 'fb8f7d59-9837-4f58-9413-03be4f1041e4', 'type': 'tool_call'}]
+06:00:40 | INFO     | researcher.py:44 | Researcher đã tìm xong thông tin.
+06:01:07 | INFO     | supervisor.py:50 | ⏸️  Đang chờ Human Review...
+06:03:16 | INFO     | main.py:22 | Bắt đầu quy trình với chủ đề: Cuộc sống năng suất
+06:03:19 | INFO     | researcher.py:42 | Researcher quyết định dùng Tool: [{'name': 'tavily_search', 'args': {'query': 'cuộc sống năng suất', 'search_depth': 'advanced'}, 'id': 'ca96df9d-786e-41ff-a4be-bd64530be384', 'type': 'tool_call'}]
+06:03:35 | INFO     | researcher.py:44 | Researcher đã tìm xong thông tin.
+06:03:56 | INFO     | supervisor.py:50 | ⏸️  Đang chờ Human Review...
+06:07:00 | INFO     | main.py:22 | Bắt đầu quy trình với chủ đề: cuộc sống năng suất
+06:07:03 | INFO     | researcher.py:42 | Researcher quyết định dùng Tool: [{'name': 'tavily_search', 'args': {'query': 'cuộc sống năng suất', 'search_depth': 'advanced'}, 'id': '4c0ed91b-488c-4230-a70d-b8ac17ca9bf0', 'type': 'tool_call'}]
+06:07:19 | INFO     | researcher.py:44 | Researcher đã tìm xong thông tin.
+06:08:05 | INFO     | supervisor.py:50 | ⏸️  Đang chờ Human Review...
+06:08:05 | INFO     | file_tools.py:22 | Đang xử lý lưu file: report_cuộc sống năng suất.md...
+06:08:05 | INFO     | file_tools.py:42 | ✅ Đã lưu file chuẩn đẹp tại: /home/muggle/hlt/py/my-project/omni-research/reports/report_cuộc_sống_năng_suất.md
