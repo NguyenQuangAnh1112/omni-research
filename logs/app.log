@@ -68,3 +68,4 @@ During task with name 'tools' and id '45aad061-2d06-6689-6119-1ceec30fa347'
 11:08:46 | INFO     | researcher.py:46 | Researcher đã tìm xong thông tin.
 11:08:49 | INFO     | researcher.py:44 | Researcher quyết định dùng Tool: [{'name': 'tavily_search', 'args': {'query': 'best open source LLM models 2025', 'search_depth': 'advanced'}, 'id': 'a5ce34e3-02fa-498a-aabd-b90a1858cfae', 'type': 'tool_call'}]
 11:09:01 | INFO     | researcher.py:46 | Researcher đã tìm xong thông tin.
+15:10:59 | INFO     | test_writer.py:29 | Input Materials: 4 đoạn thông tin.
