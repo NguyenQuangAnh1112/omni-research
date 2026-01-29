@@ -13,7 +13,7 @@ class SuperState(TypedDict):
 
 class ResearcherState(TypedDict):
     topic: str
-    logs: List[BaseMessage]
+    logs: Annotated[List[BaseMessage], add_messages]
     findings: List[str]
 
 

@@ -37,3 +37,34 @@
 10:10:49 | INFO     | file_tools.py:22 | Đang xử lý lưu file: test_phase_1.md...
 10:10:49 | INFO     | file_tools.py:42 | ✅ Đã lưu file chuẩn đẹp tại: /home/muggle/hlt/py/my-project/omni-research/reports/test_phase_1.md
 10:10:49 | INFO     | test_phase1.py:63 | Kết quả ghi file: Đã lưu báo cáo thành công: /home/muggle/hlt/py/my-project/omni-research/reports/test_phase_1.md
+11:06:00 | INFO     | test_researcher.py:23 | Topic: Các model LLM mã nguồn mở tốt nhất 2025
+11:06:04 | INFO     | researcher.py:44 | Researcher quyết định dùng Tool: [{'name': 'tavily_search', 'args': {'query': 'best open source LLM models 2025', 'search_depth': 'advanced'}, 'id': 'd00a4111-a844-46d5-9677-be27db01d982', 'type': 'tool_call'}]
+11:06:04 | ERROR    | test_researcher.py:46 | Lỗi khi chạy Researcher: No message found in input
+Traceback (most recent call last):
+  File "/home/muggle/hlt/py/my-project/omni-research/test/test_researcher.py", line 28, in test_researcher
+    for event in researcher_graph.stream(initial_state):
+  File "/home/muggle/hlt/py/my-project/omni-research/.venv/lib/python3.11/site-packages/langgraph/pregel/main.py", line 2646, in stream
+    for _ in runner.tick(
+  File "/home/muggle/hlt/py/my-project/omni-research/.venv/lib/python3.11/site-packages/langgraph/pregel/_runner.py", line 167, in tick
+    run_with_retry(
+  File "/home/muggle/hlt/py/my-project/omni-research/.venv/lib/python3.11/site-packages/langgraph/pregel/_retry.py", line 42, in run_with_retry
+    return task.proc.invoke(task.input, config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/muggle/hlt/py/my-project/omni-research/.venv/lib/python3.11/site-packages/langgraph/_internal/_runnable.py", line 656, in invoke
+    input = context.run(step.invoke, input, config, **kwargs)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/muggle/hlt/py/my-project/omni-research/.venv/lib/python3.11/site-packages/langgraph/_internal/_runnable.py", line 400, in invoke
+    ret = self.func(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/muggle/hlt/py/my-project/omni-research/.venv/lib/python3.11/site-packages/langgraph/prebuilt/tool_node.py", line 793, in _func
+    tool_calls, input_type = self._parse_input(input)
+                             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/muggle/hlt/py/my-project/omni-research/.venv/lib/python3.11/site-packages/langgraph/prebuilt/tool_node.py", line 1239, in _parse_input
+    raise ValueError(msg)
+ValueError: No message found in input
+During task with name 'tools' and id '45aad061-2d06-6689-6119-1ceec30fa347'
+11:08:31 | INFO     | test_researcher.py:23 | Topic: Các model LLM mã nguồn mở tốt nhất 2025
+11:08:33 | INFO     | researcher.py:44 | Researcher quyết định dùng Tool: [{'name': 'tavily_search', 'args': {'query': 'best open source LLM models 2025', 'search_depth': 'advanced'}, 'id': 'f23be03c-a04d-4c94-a33c-14d1255445a2', 'type': 'tool_call'}]
+11:08:46 | INFO     | researcher.py:46 | Researcher đã tìm xong thông tin.
+11:08:49 | INFO     | researcher.py:44 | Researcher quyết định dùng Tool: [{'name': 'tavily_search', 'args': {'query': 'best open source LLM models 2025', 'search_depth': 'advanced'}, 'id': 'a5ce34e3-02fa-498a-aabd-b90a1858cfae', 'type': 'tool_call'}]
+11:09:01 | INFO     | researcher.py:46 | Researcher đã tìm xong thông tin.
