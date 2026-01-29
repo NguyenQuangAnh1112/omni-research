@@ -1,137 +1,119 @@
-## Omni Research
+# 🔬 Omni Research
 
-### 1. Tổng quan hệ thống (System Overview)
+> Multi-Agent AI system for automated topic research and report generation
 
-**Omni-Research** là một hệ thống Multi-Agent phân cấp (Hierarchical Agent System) chạy trên Terminal.
+A hierarchical multi-agent system built with **LangGraph** that automates the research and writing process. Simply input a topic, and the agents will research, write, and produce a polished Markdown report — with you as the final reviewer.
 
-- **Input:** Người dùng nhập một chủ đề (VD: "Tương lai của AI Agent").
-- **Process:**
-  1. **Researcher:** Tự động tìm kiếm, thu thập thông tin từ nhiều nguồn (Tavily/Wiki).
-  2. **Writer:** Tổng hợp thông tin, viết thành bài báo Markdown (`.md`).
-  3. **Supervisor:** Điều phối luồng đi, không làm việc cụ thể.
-  4. **Human (Bạn):** Đóng vai trò kiểm duyệt viên (Editor). Duyệt bài trước khi xuất bản.
-- **Output:** File báo cáo nằm trong thư mục `reports/`.
+## ✨ Features
 
----
+- 🔍 **Automated Research** — Uses Tavily API to search and gather information
+- ✍️ **AI Writing Agent** — Synthesizes research into a structured report  
+- 👤 **Human-in-the-Loop** — Review and approve before publishing
+- 📝 **Markdown Output** — Clean reports saved in `reports/`
 
-### 2. Luồng dữ liệu (Data Flow Diagram)
+## 🚀 Quick Start
 
-Đây là bản đồ đường đi của dữ liệu. Bạn cần hiểu rõ cái này để code `State` không bị rối.
+### Prerequisites
 
-**Quy trình chi tiết:**
+- Python 3.11+
+- [uv](https://docs.astral.sh/uv/) (recommended) or pip
+- Tavily API key ([get one here](https://tavily.com/))
+- Ollama running locally (for LLM)
 
-1. **User** gửi yêu cầu -> **Supervisor**.
-2. **Supervisor** phân tích -> Gửi lệnh sang **Researcher**.
-3. **Researcher** (Subgraph) chạy vòng lặp tìm kiếm -> Trả về `research_data` (Dữ liệu thô).
-4. **Supervisor** nhận dữ liệu -> Gửi sang **Writer**.
-5. **Writer** (Subgraph) đọc dữ liệu -> Viết bài -> Trả về `draft` (Bản nháp).
-6. **Supervisor** nhận bản nháp -> **TẠM DỪNG (Interrupt)** để hỏi ý kiến User.
-7. **User Review:**
-   - _Trường hợp 1 (OK):_ User gõ "Approved" -> Gọi **Publisher** -> Lưu file -> Kết thúc.
-   - _Trường hợp 2 (Reject):_ User gõ "Sửa đoạn mở bài đi" -> Quay lại **Writer** -> Viết lại -> Lặp lại bước 6.
+### Installation
 
----
+```bash
+# Clone the repo
+git clone https://github.com/yourusername/omni-research.git
+cd omni-research
 
-### 3. Định nghĩa State (Data Structures) 💾
+# Install dependencies
+uv sync
 
-Trong LangGraph, State là "trái tim". Chúng ta cần thiết kế State tách biệt để đảm bảo tính đóng gói (Encapsulation).
+# Setup environment
+cp .env.example .env
+# Edit .env and add your TAVILY_API_KEY
+```
 
-#### A. `SuperState` (State chung của cả hệ thống)
+### Usage
 
-Đây là cuốn "sổ cái" mà Supervisor cầm.
+```bash
+python main.py
+```
 
-| **Tên biến**    | **Kiểu dữ liệu**    | **Mô tả**                                                             |
-| --------------- | ------------------- | --------------------------------------------------------------------- |
-| `messages`      | `list[BaseMessage]` | Lịch sử chat tổng quát với User.                                      |
-| `research_data` | `list[str]`         | Danh sách các đoạn thông tin mà Researcher tìm được. (Để Writer đọc). |
-| `current_draft` | `str`               | Nội dung bài viết hiện tại.                                           |
-| `next_step`     | `str`               | Bước tiếp theo (RESEARCH, WRITE, PUBLISH, FINISH).                    |
+Then enter a topic when prompted:
 
-#### B. `ResearcherState` (State riêng của đội tìm kiếm)
+```
+Nhập chủ đề: Future of AI Agents
+   Using Node: supervisor...
+   Using Node: researcher...
+   Using Node: writer...
 
-Chỉ quan tâm việc tìm tin, không quan tâm việc viết bài.
+📄 BẢN NHÁP ĐỀ XUẤT TỪ WRITER:
+==================================================
+...
+==================================================
 
-| **Tên biến** | **Kiểu dữ liệu**    | **Mô tả**                              |
-| ------------ | ------------------- | -------------------------------------- |
-| `topic`      | `str`               | Chủ đề cần tìm (Input từ cha).         |
-| `logs`       | `list[BaseMessage]` | Lịch sử chạy tool tìm kiếm (Internal). |
-| `findings`   | `list[str]`         | Kết quả tìm được (Output trả về cha).  |
+REVIEW: Bạn có duyệt bài này không? (yes/no): yes
+>> Đã duyệt! Đang tiến hành lưu file...
 
-#### C. `WriterState` (State riêng của đội viết bài)
+Quy trình hoàn tất! File đã được lưu.
+```
 
-| **Tên biến** | **Kiểu dữ liệu** | **Mô tả**                                         |
-| ------------ | ---------------- | ------------------------------------------------- |
-| `materials`  | `list[str]`      | Dữ liệu đầu vào (Lấy từ `research_data` của cha). |
-| `feedback`   | `str`            | Góp ý của User (nếu có yêu cầu sửa).              |
-| `draft`      | `str`            | Bài viết hoàn chỉnh (Output trả về cha).          |
+## 🏗️ Architecture
 
----
+```
+User Input → Supervisor → Researcher → Writer → Human Review → Publish
+                ↑                         ↓
+                └──── Revision loop ──────┘
+```
 
-### 4. Đặc tả API & Tools
+| Agent | Role |
+|-------|------|
+| **Supervisor** | Orchestrates workflow and routing |
+| **Researcher** | Searches and collects information |
+| **Writer** | Synthesizes data into reports |
+| **Human** | Reviews and approves final output |
 
-#### Tool 1: `TavilySearch` (Có sẵn)
-
-- **Input:** Query string.
-- **Output:** JSON search results.
-
-#### Tool 2: `save_report` (Tự viết)
-
-- **Chức năng:** Lưu string vào file `.md`.
-- **Input:**
-  - `content`: Nội dung bài viết.
-  - `filename`: Tên file (VD: `report_v1.md`).
-- **Yêu cầu:** Phải dùng `logger` để ghi log và `@handle_errors` để bắt lỗi IO.
-
----
-
-### 5. Cấu trúc thư mục (Finalized) 📂
-
-Bạn hãy tạo cây thư mục y hệt như thế này:
-
-Plaintext
+## 📁 Project Structure
 
 ```
 omni-research/
-├── .env                  # Chứa TAVILY_API_KEY
-├── logs/                 # Chứa app.log
-│   └── app.log
-├── reports/              # Nơi xuất file báo cáo
+├── main.py                 # Entry point
 ├── src/
-│   ├── __init__.py
-│   ├── main.py           # [Entry Point] Chạy app, vòng lặp chat
-│   ├── state.py          # [Model] Định nghĩa các class TypedDict
-│   ├── agents/           # [Controller] Logic các Node
-│   │   ├── __init__.py
-│   │   ├── researcher.py # Subgraph Tìm kiếm
-│   │   ├── writer.py     # Subgraph Viết bài
-│   │   └── supervisor.py # Graph Cha + Routing Logic
-│   ├── tools/            # [Service] Các công cụ
-│   │   ├── __init__.py
-│   │   ├── search_tools.py
-│   │   └── file_tools.py
-│   └── utils/            # [Infrastructure] Tiện ích
-│       ├── __init__.py
-│       ├── llm.py        # Hàm get_llm()
-│       ├── logger.py     # (Đã có)
-│       └── exception.py  # (Đã có)
-└── pyproject.toml
+│   ├── agents/
+│   │   ├── supervisor.py   # Main graph + routing
+│   │   ├── researcher.py   # Research subgraph
+│   │   └── writer.py       # Writer subgraph
+│   ├── tools/
+│   │   ├── search_tools.py # Tavily integration
+│   │   └── file_tools.py   # Report saving
+│   ├── utils/
+│   │   ├── logger.py       # Logging setup
+│   │   └── exception.py    # Error handling
+│   └── state.py            # State definitions
+├── reports/                # Generated reports
+├── logs/                   # Application logs
+└── test/                   # Test files
 ```
+
+## 🔧 Configuration
+
+| Variable | Description |
+|----------|-------------|
+| `TAVILY_API_KEY` | Your Tavily API key for web search |
+
+## 📦 Dependencies
+
+- [LangGraph](https://langchain-ai.github.io/langgraph/) — Agent orchestration
+- [LangChain](https://python.langchain.com/) — LLM framework
+- [Tavily](https://tavily.com/) — Web search API
+- [Ollama](https://ollama.ai/) — Local LLM
+
+## 📄 License
+
+MIT
 
 ---
 
-### 6. Nhiệm vụ lập trình (Coding Tasks)
-
-Chúng ta sẽ code theo thứ tự từ trong ra ngoài (Bottom-Up) để dễ test:
-
-1. **Phase 1: Foundation (Nền móng)**
-   - Code `src/state.py`: Định nghĩa các TypedDict.
-   - Code `src/utils/llm.py`: Setup Ollama.
-   - Code `src/tools/`: Setup Tavily và File Tool.
-
-2. **Phase 2: Subgraphs (Nhân viên)**
-   - Code `src/agents/researcher.py`: ReAct loop tìm kiếm.
-   - Code `src/agents/writer.py`: Prompt LLM viết bài từ list dữ liệu.
-
-3. **Phase 3: Supervisor & Main (Sếp & Tích hợp)**
-   - Code `src/agents/supervisor.py`: Logic router, Human-in-the-loop.
-   - Code `src/main.py`: Chạy CLI.
+<p align="center">Built with ❤️ and LangGraph</p>
